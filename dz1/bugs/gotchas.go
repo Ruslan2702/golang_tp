@@ -7,23 +7,23 @@ import (
 
 // сюда вам надо писать функции, которых не хватает, чтобы проходили тесты в gotchas_test.go
 
-func ReturnInt() int{
+func ReturnInt() int {
 	return 1
 }
 
-func ReturnFloat() float32{
+func ReturnFloat() float32 {
 	return 1.1
 }
 
-func ReturnIntArray() [3]int{
+func ReturnIntArray() [3]int {
 	return [3]int{1, 3, 4}
 }
 
-func ReturnIntSlice() []int{
+func ReturnIntSlice() []int {
 	return []int{1, 2, 3}
 }
 
-func IntSliceToString(arr []int) string{
+func IntSliceToString(arr []int) string {
 	var result string
 	for _, val := range arr {
 		result += strconv.Itoa(val)
@@ -32,7 +32,7 @@ func IntSliceToString(arr []int) string{
 	return result
 }
 
-func MergeSlices(floarArr []float32, intArr []int32)  []int{
+func MergeSlices(floarArr []float32, intArr []int32)  []int {
 	result := make([]int, len(floarArr) + len(intArr), len(floarArr) + len(intArr))
 	for idx, val := range floarArr {
 		result[idx] = int(val)
@@ -45,7 +45,7 @@ func MergeSlices(floarArr []float32, intArr []int32)  []int{
 	return result
 }
 
-func GetMapValuesSortedByKey(seasons map[int]string) []string{
+func GetMapValuesSortedByKey(seasons map[int]string) []string {
 	keys := make([]int, 0, len(seasons))
 	result := make([]string, 0, len(seasons))
 	for val := range seasons {
