@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -52,11 +53,12 @@ func main()  {
 		fmt.Println(line)
 	}
 
-	fmt.Printf("Result = %d\n", Calculate(line))
+
+	//fmt.Printf("Result = %d\n", Calculate(line))
 }
 
 
-func Calculate(expression string) int {
+func Calculate(expression string) (int, error) {
 	stack := NewStack()
 
 	elements := strings.Split(expression, " ")
@@ -67,7 +69,7 @@ func Calculate(expression string) int {
 		case " ":
 			continue
 		case "=":
-			return stack.Pop()
+			return stack.Pop(), nil
 		case "+":
 			stack.Push(stack.Pop() + stack.Pop())
 		case "-":
@@ -75,11 +77,15 @@ func Calculate(expression string) int {
 		case "*":
 			stack.Push(stack.Pop() * stack.Pop())
 		default:
-			value, _ := strconv.Atoi(char)
+			value, err := strconv.Atoi(char)
+			if err != nil {
+				return 0, err
+			}
+
 			fmt.Println(value)
 			stack.Push(value)
 		}
 	}
 
-	return -1
+	return 0, errors.New("not enough operations in input string")
 }
