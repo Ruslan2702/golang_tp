@@ -71,5 +71,6 @@ func TestTreeDir(t *testing.T) {
 	result := out.String()
 	if result != testDirResult {
 		t.Errorf("test for OK Failed - results not match\nGot:\n%v\nExpected:\n%v", result, testDirResult)
+		t.Errorf("got: %d, expected: %d", len(result), len(testDirResult))
 	}
 }
