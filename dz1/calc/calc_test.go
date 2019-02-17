@@ -50,3 +50,11 @@ func TestBad(t *testing.T) {
 		t.Errorf("results not match\nGot: nill\nExpected some error")
 	}
 }
+
+func TestDivision(t *testing.T) {
+	expected := 2
+	result, _ := Calculate("2 100 400 / / =")
+	if result != expected {
+		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
+	}
+}

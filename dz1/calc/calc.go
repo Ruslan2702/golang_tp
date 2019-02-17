@@ -76,6 +76,8 @@ func Calculate(expression string) (int, error) {
 			stack.Push(-stack.Pop() + stack.Pop())
 		case "*":
 			stack.Push(stack.Pop() * stack.Pop())
+		case "/":
+			stack.Push(stack.Pop() / stack.Pop())
 		default:
 			value, err := strconv.Atoi(char)
 			if err != nil {
