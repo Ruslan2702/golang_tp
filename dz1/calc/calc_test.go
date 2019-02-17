@@ -1,48 +1,11 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 // сюда писать тесты
-
-func TestAdd(t *testing.T) {
-	expected := 3
-	result, _ := Calculate("1 2 + =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
-	}
-}
-
-func TestDifference(t *testing.T) {
-	expected := 90
-	result, _ := Calculate("100 20 10 - - =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
-	}
-}
-
-func TestMulti(t *testing.T) {
-	expected := 125
-	result, _ := Calculate("5 5 5 * * =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
-	}
-}
-
-func TestComplexFirst(t *testing.T) {
-	expected := 15
-	result, _ := Calculate("1 2 3 4 + * + =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
-	}
-}
-
-func TestComplexSecond(t *testing.T) {
-	expected := 21
-	result, _ := Calculate("1 2 + 3 4 + * =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
-	}
-}
 
 func TestBad(t *testing.T) {
 	_, err := Calculate("1 2 + 3 s 4 + * ")
@@ -51,10 +14,25 @@ func TestBad(t *testing.T) {
 	}
 }
 
-func TestDivision(t *testing.T) {
-	expected := 2
-	result, _ := Calculate("2 100 400 / / =")
-	if result != expected {
-		t.Errorf("results not match\nGot: %v\nExpected: %v", result, expected)
+func TestCalc(t *testing.T) {
+	testCases := []struct {
+		expression  string
+		expected  int
+	}{
+		{"1 2 + =", 3},
+		{"100 20 10 - - =", 90},
+		{"5 5 5 * * =", 125},
+		{"1 2 3 4 + * + =", 15},
+		{"1 2 + 3 4 + * =", 21},
+		{"2 100 400 / / =", 2},
+	}
+
+	for idx, myCase := range testCases {
+		t.Run(fmt.Sprintf("Test #%d: %s", idx, myCase.expression), func(t *testing.T) {
+			result, _ := Calculate(myCase.expression)
+			if result != myCase.expected {
+				t.Errorf("results not match\nGot: %v\nExpected: %v", result, myCase.expected)
+			}
+		})
 	}
 }

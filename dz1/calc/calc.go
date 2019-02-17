@@ -84,7 +84,6 @@ func Calculate(expression string) (int, error) {
 				return 0, err
 			}
 
-			fmt.Println(value)
 			stack.Push(value)
 		}
 	}
