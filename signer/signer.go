@@ -24,36 +24,28 @@ func SingleHash(in, out chan interface{}) {
 	shGroup.Wait()
 }
 
-func SingleMd5(result chan interface{}, data string, compareGroup *sync.WaitGroup) {
-	defer compareGroup.Done()
-
+func SingleMd5(result chan interface{}, data string) {
 	mu.Lock()
 	result <- DataSignerMd5(data)
 	mu.Unlock()
 }
 
-func SingleCrc32(result chan interface{}, data string, compareGroup *sync.WaitGroup) {
-	defer compareGroup.Done()
-
+func SingleCrc32(result chan interface{}, data string) {
 	result <- DataSignerCrc32(data)
 }
 
 func SingleHashCalculate(data string, out chan interface{}, singleWait *sync.WaitGroup) {
 	defer singleWait.Done()
 
-	compareGroup := &sync.WaitGroup{}
 
 	val1 := make(chan interface{})
-	compareGroup.Add(1)
-	go SingleMd5(val1, data, compareGroup)
+	go SingleMd5(val1, data)
 
 	val2 := make(chan interface{})
-	compareGroup.Add(1)
-	go SingleCrc32(val2, data, compareGroup)
+	go SingleCrc32(val2, data)
 
 	val3 := make(chan interface{})
-	compareGroup.Add(1)
-	go SingleCrc32(val3, (<-val1).(string), compareGroup)
+	go SingleCrc32(val3, (<-val1).(string))
 
 	out <- (<-val2).(string) + "~" + (<-val3).(string)
 }
