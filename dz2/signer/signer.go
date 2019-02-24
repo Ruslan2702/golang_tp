@@ -4,11 +4,11 @@ import (
 	"runtime"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 var mu = &sync.Mutex{}
-var list = &sync.Mutex{}
 
 
 func SingleHash(in, out chan interface{}) {
@@ -24,30 +24,29 @@ func SingleHash(in, out chan interface{}) {
 	shGroup.Wait()
 }
 
-func SingleMd5(result chan interface{}, data string) {
+func SingleMd5(result chan string, data string) {
 	mu.Lock()
 	result <- DataSignerMd5(data)
 	mu.Unlock()
 }
 
-func SingleCrc32(result chan interface{}, data string) {
+func SingleCrc32(result chan string, data string) {
 	result <- DataSignerCrc32(data)
 }
 
 func SingleHashCalculate(data string, out chan interface{}, singleWait *sync.WaitGroup) {
 	defer singleWait.Done()
 
-
-	val1 := make(chan interface{})
+	val1 := make(chan string)
 	go SingleMd5(val1, data)
 
-	val2 := make(chan interface{})
+	val2 := make(chan string)
 	go SingleCrc32(val2, data)
 
-	val3 := make(chan interface{})
-	go SingleCrc32(val3, (<-val1).(string))
+	val3 := make(chan string)
+	go SingleCrc32(val3, <-val1)
 
-	out <- (<-val2).(string) + "~" + (<-val3).(string)
+	out <- (<-val2) + "~" + (<-val3)
 }
 
 func MultiHash(in, out chan interface{}) {
@@ -69,9 +68,9 @@ func MultiHashCalculate(data string, out chan interface{}, multiGroup *sync.Wait
 
 	sixItGroup := &sync.WaitGroup{}
 
-	chansForChanks := make([]chan interface{}, 6)
+	chansForChanks := make([]chan string, 6)
 	for i := 0; i < 6; i++ {
-		chansForChanks[i] = make(chan interface{})
+		chansForChanks[i] = make(chan string)
 	}
 
 	for i := 0; i < 6; i++ {
@@ -82,13 +81,13 @@ func MultiHashCalculate(data string, out chan interface{}, multiGroup *sync.Wait
 	resultHash := ""
 
 	for i := 0; i < 6; i++ {
-		resultHash += (<-chansForChanks[i]).(string)
+		resultHash += <-chansForChanks[i]
 	}
 
 	out <- resultHash
 }
 
-func MultiCrc32(result chan interface{}, data string, iteration int, group *sync.WaitGroup) {
+func MultiCrc32(result chan string, data string, iteration int, group *sync.WaitGroup) {
 	defer group.Done()
 
 	result <- DataSignerCrc32(strconv.Itoa(iteration) + data)
@@ -99,20 +98,11 @@ func CombineResults(in, out chan interface{}) {
 	multiResults := make([]string, 0)
 
 	for input := range in {
-		list.Lock()
 		multiResults =  append(multiResults, input.(string))
-		list.Unlock()
 	}
 
 	sort.Strings(multiResults)
-
-	result := ""
-	for idx, data := range multiResults {
-		result += data
-		if idx != len(multiResults) - 1 {
-			result += "_"
-		}
-	}
+	result := strings.Join(multiResults, "_")
 
 	out <- result
 }
