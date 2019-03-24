@@ -10,7 +10,6 @@ import (
 
 var mu = &sync.Mutex{}
 
-
 func SingleHash(in, out chan interface{}) {
 	shGroup := &sync.WaitGroup{}
 	for input := range in {
@@ -98,7 +97,7 @@ func CombineResults(in, out chan interface{}) {
 	multiResults := make([]string, 0)
 
 	for input := range in {
-		multiResults =  append(multiResults, input.(string))
+		multiResults = append(multiResults, input.(string))
 	}
 
 	sort.Strings(multiResults)
@@ -129,4 +128,8 @@ func DoTask(task job, in chan interface{}, out chan interface{}, wg *sync.WaitGr
 	defer close(out)
 
 	task(in, out)
+}
+
+func main() {
+
 }

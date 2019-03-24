@@ -44,3 +44,7 @@ func BadMap() (resultErr error) {
 
 	return nil
 }
+
+func main() {
+
+}
